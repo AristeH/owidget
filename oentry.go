@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/widget"
-	"github.com/sirupsen/logrus"
 	"strings"
 )
 
@@ -66,7 +65,7 @@ func (e *oEntry) menu() {
 	menuItem = fyne.NewMenuItem(
 		"Сортировка",
 		func() {
-			Log.WithFields(logrus.Fields{"entry.text": e.Text}).Info("сортировка ")
+			fmt.Println("entry.text", e.Text, "сортировка ")
 		},
 	)
 	menuItems = append(menuItems, menuItem)
@@ -84,7 +83,6 @@ func (e *oEntry) TappedSecondary(ev *fyne.PointEvent) {
 
 func (e *oEntry) OnChanged(t string) {
 	fmt.Println(e.Entry.Text)
-	Log.WithFields(logrus.Fields{"entry.text": e.Text}).Info("сортировка ")
 }
 
 func NewoEntry() *oEntry {

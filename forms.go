@@ -1,12 +1,15 @@
 package owidget
 
 import (
-	"otable/data"
-
+	"fmt"
 	"fyne.io/fyne/v2"
-
-	"github.com/sirupsen/logrus"
 )
+
+type GetData struct {
+	Data            [][]string
+	DataDescription [][]string
+	Enum            map[string][]string
+}
 
 type ActiveWidget struct {
 	tip string //bool, ce
@@ -18,10 +21,9 @@ type ActiveWidget struct {
 
 // FormData - данные формы
 type FormData struct {
-	ID    string             // ID - ГУИД формы
-	Table map[string]*OTable // Table  - список таблиц формы
-	W     fyne.Window
-	//ActiveContainer *OTable
+	ID           string             // ID - ГУИД формы
+	Table        map[string]*OTable // Table - список таблиц формы
+	W            fyne.Window
 	ActiveWidget *ActiveWidget
 }
 
@@ -44,17 +46,17 @@ func PutListForm(name, header string) *FormData {
 	}
 	f.W = fyne.CurrentApp().NewWindow(header)
 	AppValues[name] = &f
-	Log.WithFields(logrus.Fields{"form": name, "event": "InitFormData()"}).Info("\u2713Init")
+	fmt.Println("form ", name, "event ", "InitFormData()")
 	return &f
 }
 
-func (f *FormData) NewOTable(name string, d data.GetData) *OTable {
+func (f *FormData) NewOTable(name string, d GetData) *OTable {
 	table := OTable{}
 	table.CellColor = make(map[string]*CellColor)
 	table.Enum = d.Enum
 	table.Form = *f
 	table.Edit = true
-	Log.WithFields(logrus.Fields{"1table.Form ": len(d.Data)}).Info("NewOTable")
+	fmt.Println("1table.Form ", len(d.Data), "NewOTable")
 	f.Table[name] = &table
 	table.fill(d)
 	return &table

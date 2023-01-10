@@ -1,16 +1,13 @@
-// описание структур для таблицы и внутренние функции
+// Package owidget описание структур для таблицы и внутренние функции
 package owidget
 
 import (
 	"fmt"
 	"image/color"
-	"otable/data"
 	"strconv"
 	"strings"
 
-	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/widget"
-	"github.com/sirupsen/logrus"
 )
 
 // TableStyle - стиль таблицы
@@ -22,37 +19,37 @@ type TableStyle struct {
 
 // CellColor - цвета для ячейки
 type CellColor struct {
-	Color   color.RGBA //цвет текста
-	BGcolor color.RGBA //цвет фона
+	fgColor color.RGBA // Цвет текста
+	bgColor color.RGBA // Цвет фона
 }
 
 // OTable - описание таблицы
 type OTable struct {
 	widget.BaseWidget
-	ID          string                  // имя таблицы уникальное в пределах формы
-	Form        FormData                // формa владелец таблицы
-	ColumnStyle map[string]*ColumnStyle // описание колонок
-	TabStyle    TableStyle              // цвета фонов таблицы(шапка, строка
-	Data        map[string][]string     // исходные данные таблицы
-	Enum        map[string][]string     // данные для колонки
-	DataV       [][]string              // отображаемые данные(сортировка, фильтр) 1 столбец ID записи, 1 строка шапка
-	Table       *widget.Table           // таблица fyne
-	Header      *widget.Table           // шапка таблицы пока не релизована
-	//	Footer      *widget.Table // когда удастся сделать скроллинг
-	//	left      *widget.Table
-	Properties *OTable               // таблица для редактирования описания  колонок
-	Tool       *widget.Toolbar       // командная панель  таблицы
-	Selected   widget.TableCellID    // выделенная ячейка таблицы
-	Edit       bool                  // редактируемость таблицы
-	CellColor  map[string]*CellColor // индивидуальный массив отображения ячеек
+	ID          string                  // Имя таблицы уникальное в пределах формы
+	Form        FormData                // Формa владелец таблицы
+	ColumnStyle map[string]*ColumnStyle // Описание колонок
+	TabStyle    TableStyle              // Цвета фонов таблицы(шапка, строка
+	Data        map[string][]string     // Исходные данные таблицы
+	Enum        map[string][]string     // Данные для колонки
+	DataV       [][]string              // Отображаемые данные(сортировка, фильтр) 1 столбец ID записи, 1 строка шапка
+	Table       *widget.Table           // Таблица fyne
+	// Header      *widget.Table           // Шапка таблицы пока не реализована
+	// Footer      *widget.Table // когда удастся сделать скроллинг
+	// left      *widget.Table
+	Properties *OTable               // Таблица для редактирования описания колонок
+	Tool       *widget.Toolbar       // Командная панель  таблицы
+	Selected   widget.TableCellID    // Выделенная ячейка таблицы
+	Edit       bool                  // Редактируемость таблицы
+	CellColor  map[string]*CellColor // Индивидуальный массив отображения ячеек
 	// wb         map[*widget.Button]int
 }
 
 // MakeTableData - функция заполняющая структуру OTable из входных данных
-func (t *OTable) fill(d data.GetData) {
+func (t *OTable) fill(d GetData) {
 	colColumns := len(d.DataDescription[0])
 	t.fillColumns(d)
-	Log.WithFields(logrus.Fields{"form": t.Form.ID, "event": "fillColumns"}).Info("MakeTableData")
+
 	colV := 0 //количество видимых столбцов для пользователя
 	for i := 0; i < colColumns; i++ {
 		b := strings.HasPrefix(d.Data[0][i], "id_") //исключим столбцы с типом ID
@@ -68,7 +65,7 @@ func (t *OTable) fill(d data.GetData) {
 		datav := make([]string, colV)
 		v := 0
 		for j := 0; j < colColumns; j++ {
-			// спрячем id  ссылки на другие таблицы
+			//спрячем id ссылки на другие таблицы
 			b := strings.HasPrefix(d.DataDescription[0][j], "id_")
 			if !b {
 				datav[v] = d.Data[i][j]
@@ -84,19 +81,11 @@ func (t *OTable) fill(d data.GetData) {
 	t.TabStyle.HeaderColor = "HeaderColor"
 	t.TabStyle.RowColor = "RowColor"
 	t.Selected = widget.TableCellID{}
-	Log.WithFields(logrus.Fields{"form": t.Form.ID, "event": "Fill data"}).Info("MakeTable")
 	t.MakeTableLabel()
 }
 
-// not work
-func (t *OTable) Scrolled(event *fyne.ScrollEvent) {
-	fmt.Println(event.Position, event.AbsolutePosition)
-	Log.WithFields(logrus.Fields{"rows": event}).Info("ScrollEvent")
-
-}
-
 // properties - свойства таблицы, описание колонок
-func (t *OTable) properties() *data.GetData {
+func (t *OTable) properties() *GetData {
 	colColumns := 10
 	colRows := len(t.ColumnStyle)
 	datag := make([][]string, colRows)
@@ -108,9 +97,9 @@ func (t *OTable) properties() *data.GetData {
 		datag[i][1] = v.name                     // заголовок
 		datag[i][2] = v.tip                      // тип столбца
 		datag[i][3] = v.formula                  // Формула
-		datag[i][4] = v.color                    // цвет теста столбца
-		datag[i][5] = v.BGcolor                  // цвет фона столбца
-		datag[i][6] = fmt.Sprintf("%v", v.Width) // ширина столбца в символах
+		datag[i][4] = v.fgColor                  // цвет теста столбца
+		datag[i][5] = v.bgColor                  // цвет фона столбца
+		datag[i][6] = fmt.Sprintf("%v", v.width) // ширина столбца в символах
 		if v.visible {                           // видимость столбца
 			datag[i][7] = "1"
 		} else {
@@ -129,14 +118,12 @@ func (t *OTable) properties() *data.GetData {
 	datag[0][1] = "Header"
 	datag[0][2] = "Type"
 	datag[0][3] = "formula"
-	datag[0][4] = "Color"
-	datag[0][5] = "BGcolor"
+	datag[0][4] = "fgColor"
+	datag[0][5] = "bgColor"
 	datag[0][6] = "Width"
 	datag[0][7] = "visible"
 	datag[0][8] = "edit"
 	datag[0][9] = "order"
-
-	Log.WithFields(logrus.Fields{"form1": t.ID, "datag": len(datag)}).Info("TableInitProperties")
 
 	// инициализация описания данных таблицы
 	datadescription := make([][]string, 4)
@@ -192,7 +179,7 @@ func (t *OTable) properties() *data.GetData {
 	datadescription[3][8] = ""
 	datadescription[3][9] = ""
 
-	f := data.GetData{}
+	f := GetData{}
 	f.Data = datag
 	f.DataDescription = datadescription
 	f.Enum = map[string][]string{
@@ -203,27 +190,27 @@ func (t *OTable) properties() *data.GetData {
 
 }
 
-// getColorCell - получим цвет фона и текста отбражаемой ячейки
+// getColorCell - получим цвет фона и текста отображаемой ячейки
 func (t *OTable) getColorCell(i widget.TableCellID) *CellColor {
 	c := CellColor{}
 	col := t.ColumnStyle[t.DataV[0][i.Col]]
-	if col.color != "" {
-		c.Color = MapColor[col.color]
+	if col.fgColor != "" {
+		c.fgColor = MapColor[col.fgColor]
 	} else {
-		c.Color = MapColor["black"]
+		c.fgColor = MapColor["black"]
 	}
 	//цвет фона строки
 	if i.Row == 0 {
-		c.BGcolor = MapColor[t.TabStyle.HeaderColor]
+		c.bgColor = MapColor[t.TabStyle.HeaderColor]
 	} else if i.Row%2 == 0 {
-		c.BGcolor = MapColor[t.TabStyle.RowAlterColor]
+		c.bgColor = MapColor[t.TabStyle.RowAlterColor]
 	} else {
-		c.BGcolor = MapColor[t.TabStyle.RowColor]
+		c.bgColor = MapColor[t.TabStyle.RowColor]
 	}
 	// цвет фона столбца
 
-	if val, ok := MapColor[col.BGcolor]; ok {
-		c.BGcolor = mix(val, c.BGcolor)
+	if val, ok := MapColor[col.bgColor]; ok {
+		c.bgColor = mix(val, c.bgColor)
 	}
 	// цвет ячейки
 	id, ok := t.CellColor[strconv.Itoa(i.Row)+";"+strconv.Itoa(i.Col)]
@@ -233,7 +220,7 @@ func (t *OTable) getColorCell(i widget.TableCellID) *CellColor {
 
 	// цвет выделенной ячейки
 	if i == t.Selected {
-		c.BGcolor = MapColor["Selected"]
+		c.bgColor = MapColor["Selected"]
 	}
 	return &c
 }

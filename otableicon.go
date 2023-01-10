@@ -3,7 +3,6 @@ package owidget
 import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/widget"
-	"github.com/sirupsen/logrus"
 )
 
 type tappableIcon struct {
@@ -20,10 +19,8 @@ func newTappableIcon(res fyne.Resource) *tappableIcon {
 }
 
 func (t *tappableIcon) Tapped(ev *fyne.PointEvent) {
-	Log.WithFields(logrus.Fields{"Tapped": ev}).Info("1tappableIcon")
 }
 func (t *tappableIcon) KeyDown(key *fyne.KeyEvent) {
-	Log.WithFields(logrus.Fields{"rows": key}).Info("TappedTappableIcon")
 }
 
 // TypedKey  fyne.Focusable

@@ -3,8 +3,6 @@ package owidget
 import (
 	"context"
 	"fmt"
-	"image/color"
-	"otable/pkg/logger"
 	"strconv"
 	"strings"
 
@@ -15,29 +13,19 @@ import (
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 	"github.com/d5/tengo/v2"
-	"github.com/sirupsen/logrus"
 )
 
-var Log *logrus.Logger
-
-func init() {
-	Log = logger.GetLog()
-}
-
 func (t *OTable) GetToolBar() {
-
-	Log.WithFields(logrus.Fields{"DocumentCreateIcon": "GetToolBar"}).Info("GetToolBar")
-
 	t.Tool = widget.NewToolbar(
 		widget.NewToolbarAction(theme.DocumentCreateIcon(), func() {
-			Log.WithFields(logrus.Fields{"DocumentCreateIcon": "DocumentCreateIcon"}).Info("GetToolBar")
+			//Log.WithFields(logrus.Fields{"DocumentCreateIcon": "DocumentCreateIcon"}).Info("GetToolBar")
 		}),
 		widget.NewToolbarSeparator(),
 		widget.NewToolbarAction(theme.ContentAddIcon(), func() {}),
 		widget.NewToolbarAction(theme.ContentRemoveIcon(), func() {}),
 		widget.NewToolbarSpacer(),
 		widget.NewToolbarAction(theme.SettingsIcon(), func() {
-			fd := PutListForm("TableProp", "Tablerop")
+			fd := PutListForm("TableProp", "Table proprieties")
 			g := t.properties()
 			table := fd.NewOTable("invoice", *g)
 			w := fd.W
@@ -46,17 +34,17 @@ func (t *OTable) GetToolBar() {
 			w.SetContent(container.NewMax(table))
 			w.SetOnClosed(func() {
 				for i := 1; i < len(table.DataV); i++ {
-					t.ColumnStyle[table.DataV[i][1]].BGcolor = table.DataV[i][5]
-					t.ColumnStyle[table.DataV[i][1]].color = table.DataV[i][4]
+					t.ColumnStyle[table.DataV[i][1]].bgColor = table.DataV[i][5]
+					t.ColumnStyle[table.DataV[i][1]].fgColor = table.DataV[i][4]
 					b, _ := strconv.ParseFloat(table.DataV[i][6], 32)
-					t.ColumnStyle[table.DataV[i][1]].Width = float32(b)
+					t.ColumnStyle[table.DataV[i][1]].width = float32(b)
 					t.ColumnStyle[table.DataV[i][1]].formula = table.DataV[i][3]
 				}
 				for n := 0; n < len(t.DataV[0]); n++ {
 					col := t.ColumnStyle[t.DataV[0][n]]
 					si := fyne.MeasureText("ш", 12, fyne.TextStyle{})
-					t.Table.SetColumnWidth(n, si.Width*col.Width)
-					t.Header.SetColumnWidth(n, si.Width*col.Width)
+					t.Table.SetColumnWidth(n, si.Width*col.width)
+					//t.Header.SetColumnWidth(n, si.Width*col.Width)
 				}
 			})
 			w.Show()
@@ -67,16 +55,16 @@ func (t *OTable) GetToolBar() {
 func (t *OTable) MakeTableLabel() {
 	rows := len(t.DataV)
 	columns := len(t.DataV[0])
-	t.Header = widget.NewTable(
-		func() (int, int) { return 1, columns },
-		func() fyne.CanvasObject { return canvas.NewText("", color.Black) },
-		func(cellID widget.TableCellID, o fyne.CanvasObject) {
-			colst := t.ColumnStyle[t.DataV[0][cellID.Col]]
-			l := o.(*canvas.Text)
-			l.Text = colst.name
-			l.Refresh()
-		},
-	)
+	//t.Header = widget.NewTable(
+	//	func() (int, int) { return 1, columns },
+	//	func() fyne.CanvasObject { return canvas.NewText("", color.Black) },
+	//	func(cellID widget.TableCellID, o fyne.CanvasObject) {
+	//		colst := t.ColumnStyle[t.DataV[0][cellID.Col]]
+	//		l := o.(*canvas.Text)
+	//		l.Text = colst.name
+	//		l.Refresh()
+	//	},
+	//)
 
 	t.Table = widget.NewTable(
 		func() (int, int) { return rows, columns },
@@ -93,14 +81,14 @@ func (t *OTable) MakeTableLabel() {
 				tip = "string"
 			}
 			mystr := []rune(t.DataV[i.Row][i.Col])
-			k := int(col.Width)
-			if col.Width > 0 {
+			k := int(col.width)
+			if col.width > 0 {
 				if len(mystr) > k-3 {
-					k = int(col.Width) - 3
+					k = int(col.width) - 3
 				}
 			}
 			if tip == "bool" {
-				rec := canvas.NewRectangle(FillColor.BGcolor)
+				rec := canvas.NewRectangle(FillColor.bgColor)
 				image := canvas.NewImageFromResource(theme.CheckButtonCheckedIcon())
 				if t.DataV[i.Row][i.Col] == "1" {
 					image = canvas.NewImageFromResource(theme.CheckButtonIcon())
@@ -173,19 +161,19 @@ func (t *OTable) MakeTableLabel() {
 						c.t = t
 						box.Objects[0] = container.New(layout.NewMaxLayout(), c)
 					}
-					Log.WithFields(logrus.Fields{"T.Form.ActiveWidget": t.Form.ActiveWidget}).Info("t.Selected")
+					//			Log.WithFields(logrus.Fields{"T.Form.ActiveWidget": t.Form.ActiveWidget}).Info("t.Selected")
 				}
 			}
 		})
 	for n := 0; n < columns; n++ {
 		col := t.ColumnStyle[t.DataV[0][n]]
 		si := fyne.MeasureText("ш", 12, fyne.TextStyle{})
-		t.Table.SetColumnWidth(n, si.Width*col.Width)
-		t.Header.SetColumnWidth(n, si.Width*col.Width)
+		t.Table.SetColumnWidth(n, si.Width*col.width)
+		//t.Header.SetColumnWidth(n, si.Width*col.Width)
 	}
 	t.ExtendBaseWidget(t)
 	t.Table.OnSelected = func(id widget.TableCellID) {
-		Log.WithFields(logrus.Fields{"t.Form": t.Form, "w": id}).Info("OnSelectedMakeTableLabel")
+		//Log.WithFields(logrus.Fields{"t.Form": t.Form, "w": id}).Info("OnSelectedMakeTableLabel")
 		t.Selected = id
 		t.Form.ActiveWidget.t = t
 
@@ -194,7 +182,7 @@ func (t *OTable) MakeTableLabel() {
 }
 
 func (t *OTable) MakeTappable(txt string, tip string, c *CellColor) *fyne.Container {
-	entry := canvas.NewText(strings.TrimRight(txt, "\x00"), c.Color)
+	entry := canvas.NewText(strings.TrimRight(txt, "\x00"), c.fgColor)
 	if strings.HasPrefix(tip, "float") {
 		tip = "float"
 	}
@@ -206,7 +194,7 @@ func (t *OTable) MakeTappable(txt string, tip string, c *CellColor) *fyne.Contai
 		entry.Alignment = fyne.TextAlignLeading
 	}
 	si := fyne.MeasureText("шii", 24, fyne.TextStyle{})
-	rec := canvas.NewRectangle(c.BGcolor)
+	rec := canvas.NewRectangle(c.bgColor)
 	rec.SetMinSize(si)
 	entry.Resize(si)
 	return container.New(layout.NewMaxLayout(), rec, entry)
@@ -267,7 +255,7 @@ func (t *OTable) TypedKey(ev *fyne.KeyEvent) {
 					col.sort = 2
 					t.sortDown()
 				}
-				for i, _ := range t.DataV[0] {
+				for i := range t.DataV[0] {
 					if i != t.Selected.Col {
 						t.ColumnStyle[t.DataV[0][i]].sort = 0
 					}
@@ -302,7 +290,7 @@ func (t *OTable) TypedKey(ev *fyne.KeyEvent) {
 		for c >= 1 {
 			c--
 			col := t.ColumnStyle[t.DataV[0][c]]
-			if col.Width != 0 {
+			if col.width != 0 {
 				t.Selected = widget.TableCellID{Col: c, Row: i.Row}
 				break
 			}
@@ -316,7 +304,7 @@ func (t *OTable) TypedKey(ev *fyne.KeyEvent) {
 		col := t.ColumnStyle[t.DataV[0][c]]
 		for len(t.DataV[0])-1 > c {
 			c++
-			if col.Width != 0 {
+			if col.width != 0 {
 				t.Selected = widget.TableCellID{Col: c, Row: i.Row}
 				break
 			}
@@ -336,10 +324,10 @@ func (t *OTable) TypedKey(ev *fyne.KeyEvent) {
 }
 
 func (t *OTable) TypedRune(r rune) {
-	Log.WithFields(logrus.Fields{"entry.text": r}).Info("onEnter ")
+	//Log.WithFields(logrus.Fields{"entry.text": r}).Info("onEnter ")
 }
 func (t *OTable) KeyDown(key *fyne.KeyEvent) {
-	Log.WithFields(logrus.Fields{"rows": key}).Info("TappedTappableIcon")
+	//	Log.WithFields(logrus.Fields{"rows": key}).Info("TappedTappableIcon")
 }
 
 // FocusLost Implements: fyne.Focusable
@@ -352,7 +340,7 @@ func (t *OTable) FocusGained() {
 
 // FocusActiveWidget - get focus active ceil table
 func (t *OTable) FocusActiveWidget() {
-	Log.WithFields(logrus.Fields{"selected": t.Selected, "edit": t.Edit, "tip": t.Form.ActiveWidget.tip}).Info("FocusActiveWidget")
+	//Log.WithFields(logrus.Fields{"selected": t.Selected, "edit": t.Edit, "tip": t.Form.ActiveWidget.tip}).Info("FocusActiveWidget")
 	t.Table.ScrollTo(t.Selected)
 	t.Table.Refresh()
 	tip := t.Form.ActiveWidget.tip
