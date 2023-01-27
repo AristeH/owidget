@@ -32,8 +32,9 @@ type OTable struct {
 	TabStyle    TableStyle              // Цвета фонов таблицы(шапка, строка
 	Data        map[string][]string     // Исходные данные таблицы
 	Enum        map[string][]string     // Данные для колонки
-	DataV       [][]string              // Отображаемые данные(сортировка, фильтр) 1 столбец ID записи, 1 строка шапка
-	Table       *widget.Table           // Таблица fyne
+	DataV       [][]string
+	// Отображаемые данные(сортировка, фильтр) 1 столбец ID записи, 1 строка шапка
+	Table *widget.Table // Таблица fyne
 	// Header      *widget.Table           // Шапка таблицы пока не реализована
 	// Footer      *widget.Table // когда удастся сделать скроллинг
 	// left      *widget.Table
