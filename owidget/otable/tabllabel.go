@@ -1,8 +1,9 @@
-package owidget
+package otable
 
 import (
 	"context"
 	"fmt"
+	"github/aristeh/owidget/owidget"
 	"strconv"
 	"strings"
 
@@ -15,7 +16,7 @@ import (
 	"github.com/d5/tengo/v2"
 )
 
-func (t *OTable) GetToolBar() {
+func (t *owidget.OTable) GetToolBar() {
 	t.Tool = widget.NewToolbar(
 		widget.NewToolbarAction(theme.DocumentCreateIcon(), func() {
 			//Log.WithFields(logrus.Fields{"DocumentCreateIcon": "DocumentCreateIcon"}).Info("GetToolBar")
@@ -25,7 +26,7 @@ func (t *OTable) GetToolBar() {
 		widget.NewToolbarAction(theme.ContentRemoveIcon(), func() {}),
 		widget.NewToolbarSpacer(),
 		widget.NewToolbarAction(theme.SettingsIcon(), func() {
-			fd := PutListForm("TableProp", "Table proprieties")
+			fd := owidget.PutListForm("TableProp", "Table proprieties")
 			g := t.properties()
 			table := fd.NewOTable("invoice", *g)
 			w := fd.W
@@ -52,7 +53,7 @@ func (t *OTable) GetToolBar() {
 
 }
 
-func (t *OTable) MakeTableLabel() {
+func (t *owidget.OTable) MakeTableLabel() {
 	rows := len(t.DataV)
 	columns := len(t.DataV[0])
 	//t.Header = widget.NewTable(
@@ -181,7 +182,7 @@ func (t *OTable) MakeTableLabel() {
 	}
 }
 
-func (t *OTable) MakeTappable(txt string, tip string, c *CellColor) *fyne.Container {
+func (t *owidget.OTable) MakeTappable(txt string, tip string, c *owidget.CellColor) *fyne.Container {
 	entry := canvas.NewText(strings.TrimRight(txt, "\x00"), c.fgColor)
 	if strings.HasPrefix(tip, "float") {
 		tip = "float"
@@ -200,7 +201,7 @@ func (t *OTable) MakeTappable(txt string, tip string, c *CellColor) *fyne.Contai
 	return container.New(layout.NewMaxLayout(), rec, entry)
 }
 
-func (t *OTable) ExecuteFormula() {
+func (t *owidget.OTable) ExecuteFormula() {
 	col := t.ColumnStyle[t.DataV[0][t.Selected.Col]]
 	if col.formula == "" {
 		return
@@ -235,12 +236,12 @@ func (t *OTable) ExecuteFormula() {
 	}
 }
 
-func (t *OTable) Tapped(ev *fyne.PointEvent) {
+func (t *owidget.OTable) Tapped(ev *fyne.PointEvent) {
 
 }
 
 // TypedKey Implements: fyne.Focusable
-func (t *OTable) TypedKey(ev *fyne.KeyEvent) {
+func (t *owidget.OTable) TypedKey(ev *fyne.KeyEvent) {
 	i := t.Selected
 	switch ev.Name {
 	case "Return":
@@ -323,23 +324,23 @@ func (t *OTable) TypedKey(ev *fyne.KeyEvent) {
 	t.FocusActiveWidget()
 }
 
-func (t *OTable) TypedRune(r rune) {
+func (t *owidget.OTable) TypedRune(r rune) {
 	//Log.WithFields(logrus.Fields{"entry.text": r}).Info("onEnter ")
 }
-func (t *OTable) KeyDown(key *fyne.KeyEvent) {
+func (t *owidget.OTable) KeyDown(key *fyne.KeyEvent) {
 	//	Log.WithFields(logrus.Fields{"rows": key}).Info("TappedTappableIcon")
 }
 
 // FocusLost Implements: fyne.Focusable
-func (t *OTable) FocusLost() {
+func (t *owidget.OTable) FocusLost() {
 }
 
 // FocusGained Implements: fyne.Focusable
-func (t *OTable) FocusGained() {
+func (t *owidget.OTable) FocusGained() {
 }
 
 // FocusActiveWidget - get focus active ceil table
-func (t *OTable) FocusActiveWidget() {
+func (t *owidget.OTable) FocusActiveWidget() {
 	//Log.WithFields(logrus.Fields{"selected": t.Selected, "edit": t.Edit, "tip": t.Form.ActiveWidget.tip}).Info("FocusActiveWidget")
 	t.Table.ScrollTo(t.Selected)
 	t.Table.Refresh()

@@ -1,4 +1,4 @@
-package owidget
+package otable
 
 import (
 	"fmt"
@@ -21,7 +21,7 @@ type ColumnStyle struct {
 }
 
 // fillColumns - filling in columns from incoming data
-func (t *OTable) fillColumns(d GetData) {
+func (t *owidget.OTable) fillColumns(d owidget.GetData) {
 	columns := len(d.DataDescription[0]) // количество колонок таблицы
 	//инициализация стиля
 	t.ColumnStyle = make(map[string]*ColumnStyle)

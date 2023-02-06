@@ -1,8 +1,9 @@
 // Package owidget описание структур для таблицы и внутренние функции
-package owidget
+package otable
 
 import (
 	"fmt"
+	owidget2 "github/aristeh/owidget/owidget"
 	"image/color"
 	"strconv"
 	"strings"
@@ -27,7 +28,7 @@ type CellColor struct {
 type OTable struct {
 	widget.BaseWidget
 	ID          string                  // Имя таблицы уникальное в пределах формы
-	Form        FormData                // Формa владелец таблицы
+	Form        owidget2.FormData       // Формa владелец таблицы
 	ColumnStyle map[string]*ColumnStyle // Описание колонок
 	TabStyle    TableStyle              // Цвета фонов таблицы(шапка, строка
 	Data        map[string][]string     // Исходные данные таблицы
@@ -47,9 +48,9 @@ type OTable struct {
 }
 
 // MakeTableData - функция заполняющая структуру OTable из входных данных
-func (t *OTable) fill(d GetData) {
+func (t *OTable) fill(d owidget2.GetData) {
 	colColumns := len(d.DataDescription[0])
-	t.fillColumns(d)
+	//t.Table.fillColumns(d)
 
 	colV := 0 //количество видимых столбцов для пользователя
 	for i := 0; i < colColumns; i++ {
@@ -82,11 +83,11 @@ func (t *OTable) fill(d GetData) {
 	t.TabStyle.HeaderColor = "HeaderColor"
 	t.TabStyle.RowColor = "RowColor"
 	t.Selected = widget.TableCellID{}
-	t.MakeTableLabel()
+	//	t.MakeTableLabel()
 }
 
 // properties - свойства таблицы, описание колонок
-func (t *OTable) properties() *GetData {
+func (t *OTable) properties() *owidget2.GetData {
 	colColumns := 10
 	colRows := len(t.ColumnStyle)
 	datag := make([][]string, colRows)
@@ -180,12 +181,12 @@ func (t *OTable) properties() *GetData {
 	datadescription[3][8] = ""
 	datadescription[3][9] = ""
 
-	f := GetData{}
+	f := owidget2.GetData{}
 	f.Data = datag
 	f.DataDescription = datadescription
 	f.Enum = map[string][]string{
-		"BGColor": Names,
-		"Color":   Names,
+		"BGColor": owidget2.Names,
+		"Color":   owidget2.Names,
 	}
 	return &f
 
@@ -196,23 +197,23 @@ func (t *OTable) getColorCell(i widget.TableCellID) *CellColor {
 	c := CellColor{}
 	col := t.ColumnStyle[t.DataV[0][i.Col]]
 	if col.fgColor != "" {
-		c.fgColor = MapColor[col.fgColor]
+		c.fgColor = owidget2.MapColor[col.fgColor]
 	} else {
-		c.fgColor = MapColor["black"]
+		c.fgColor = owidget2.MapColor["black"]
 	}
 	//цвет фона строки
 	if i.Row == 0 {
-		c.bgColor = MapColor[t.TabStyle.HeaderColor]
+		c.bgColor = owidget2.MapColor[t.TabStyle.HeaderColor]
 	} else if i.Row%2 == 0 {
-		c.bgColor = MapColor[t.TabStyle.RowAlterColor]
+		c.bgColor = owidget2.MapColor[t.TabStyle.RowAlterColor]
 	} else {
-		c.bgColor = MapColor[t.TabStyle.RowColor]
+		c.bgColor = owidget2.MapColor[t.TabStyle.RowColor]
 	}
 	// цвет фона столбца
 
-	if val, ok := MapColor[col.bgColor]; ok {
-		c.bgColor = mix(val, c.bgColor)
-	}
+	//if val, ok := owidget2.MapColor[col.bgColor]; ok {
+	////	c.bgColor = owidget.mix(val, c.bgColor)
+	//}
 	// цвет ячейки
 	id, ok := t.CellColor[strconv.Itoa(i.Row)+";"+strconv.Itoa(i.Col)]
 	if ok {
@@ -221,7 +222,7 @@ func (t *OTable) getColorCell(i widget.TableCellID) *CellColor {
 
 	// цвет выделенной ячейки
 	if i == t.Selected {
-		c.bgColor = MapColor["Selected"]
+		c.bgColor = owidget2.MapColor["Selected"]
 	}
 	return &c
 }

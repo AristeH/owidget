@@ -2,10 +2,12 @@ package owidget
 
 import (
 	"fmt"
+
 	"fyne.io/fyne/v2"
 )
 
 type GetData struct {
+	Container       string
 	Data            [][]string
 	DataDescription [][]string
 	Enum            map[string][]string
@@ -13,16 +15,16 @@ type GetData struct {
 
 type ActiveWidget struct {
 	tip string //bool, ce
-	ce  *oEntry
-	ti  *tappableIcon
-	sel *oSelect
-	t   *OTable
+	ce  *owidget.oEntry
+	ti  *owidget.tappableIcon
+	sel *owidget.oSelect
+	t   *otable.OTable
 }
 
 // FormData - данные формы
 type FormData struct {
-	ID           string             // ID - ГУИД формы
-	Table        map[string]*OTable // Table - список таблиц формы
+	ID           string                    // ID - ГУИД формы
+	Table        map[string]*otable.OTable // Table - список таблиц формы
 	W            fyne.Window
 	ActiveWidget *ActiveWidget
 }
@@ -40,7 +42,7 @@ func GetW(name string) fyne.Window {
 func PutListForm(name, header string) *FormData {
 	f := FormData{
 		ID:    name,
-		Table: make(map[string]*OTable),
+		Table: make(map[string]*otable.OTable),
 		//	ActiveContainer: &OTable{},
 		ActiveWidget: &ActiveWidget{},
 	}
@@ -50,9 +52,9 @@ func PutListForm(name, header string) *FormData {
 	return &f
 }
 
-func (f *FormData) NewOTable(name string, d GetData) *OTable {
-	table := OTable{}
-	table.CellColor = make(map[string]*CellColor)
+func (f *FormData) NewOTable(name string, d GetData) *otable.OTable {
+	table := otable.OTable{}
+	table.CellColor = make(map[string]*otable.CellColor)
 	table.Enum = d.Enum
 	table.Form = *f
 	table.Edit = true

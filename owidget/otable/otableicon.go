@@ -1,4 +1,4 @@
-package owidget
+package otable
 
 import (
 	"fyne.io/fyne/v2"

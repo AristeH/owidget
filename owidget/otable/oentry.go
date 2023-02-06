@@ -1,4 +1,4 @@
-package owidget
+package otable
 
 import (
 	"fmt"

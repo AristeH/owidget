@@ -1,4 +1,4 @@
-package owidget
+package otable
 
 // https://github.com/PaulWaldo/fyne-headertable
 import (
@@ -14,7 +14,7 @@ type headerTableRenderer struct {
 	container   *fyne.Container
 }
 
-func (t *OTable) CreateRenderer() fyne.WidgetRenderer {
+func (t *owidget.OTable) CreateRenderer() fyne.WidgetRenderer {
 	Log.WithFields(logrus.Fields{"h.Tool": t.Tool}).Info("CreateRenderer")
 	ht := headerTableRenderer{}
 	ht.headerTable = t
